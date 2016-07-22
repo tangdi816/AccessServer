@@ -27,7 +27,7 @@ public:
   {
   }
 
-  CCommTask(TaskType eType, CHDL hdl, std::string strData)
+  CCommTask(TaskType eType, CHDL hdl, const std::string& strData)
     :m_eType(eType)
     ,m_hdlClient(hdl)
     ,m_strData(strData)

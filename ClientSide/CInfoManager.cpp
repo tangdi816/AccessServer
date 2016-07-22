@@ -20,7 +20,8 @@ void CCInfoManager::InsertCInfo(CHDL pHdl, const string& strUUID)
   {
     //锁住表
     lock_guard<mutex> lkg(m_lkMap);
-    if(!m_mapCIM.insert(make_pair(pHdl, strUUID)).second){
+    string strKey=strUUID;
+    if(!m_mapCIM.insert(make_pair(pHdl, strKey)).second){
       //插入失败
       auto itFider=m_mapCIM.find(pHdl);
       //找到之前存入客户端信息

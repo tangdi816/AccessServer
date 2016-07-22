@@ -86,7 +86,7 @@ void CTQManager::WriteTaskQueue(SPtrCTask spTask)
   int iThreadNum=m_tpReader.size();
 
   //任务数量超过线程数量10倍
-  if(10.0>iTaskNum/iThreadNum){
+  if(10.0<iTaskNum/iThreadNum){
     //添加一条读取线程处理任务
     thread* pThread=m_tpReader.create_thread(bind(&CTQManager::ReadTaskQueue, this));
     {

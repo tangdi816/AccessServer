@@ -23,12 +23,6 @@ private:
   //客户端连接任务
   //参数：传入任务对象指针
   void ClientLinked(SPtrCTask pTask);
-
-  //获取加密key串
-  void GetKey();
-
-  //加密key串
-  std::string m_strKey;
 };
 
 #endif

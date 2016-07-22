@@ -1,16 +1,20 @@
 /*
 **客户端连接信息表管理类
 */
-#include <boost/unordered_map.hpp>
+#ifndef __CLIENT_INRO_MANAGER_H__
+#define __CLIENT_INRO_MANAGER_H__
+
+#include <map>
 #include <websocketpp/server.hpp>
 #include <boost/thread.hpp>
 #include <boost/thread/lock_factories.hpp>
+#include <boost/smart_ptr.hpp>
 
 class CCInfoManager
 {
 public:
   typedef websocketpp::connection_hdl CHDL;
-  typedef boost::unordered_map<CHDL, std::string> CInfoMap;
+  typedef std::map<CHDL, std::string> CInfoMap;
 
   CCInfoManager();
   ~CCInfoManager();
@@ -27,4 +31,4 @@ public:
   boost::mutex m_lkMap; 
 
 };
-
+#endif

@@ -1,21 +1,21 @@
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_io.hpp>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
 #include <string>
 #include "TaskParser.h"
 #include "Utility.h"
 #include "EncodeAndDecode.h"
+#include "CInfoManager.h"
+#include "ClientLinker.h"
 
 using namespace std;
 using namespace boost::uuids;
-using namespace boost::property_tree;
+
+extern CCInfoManager g_oClientManager;
+extern CClientLinker g_oCLinker;
 
 CTaskParser::CTaskParser()
 {
-  //从配置文件中读取加密key
-  GetKey();
 }
 
 
@@ -30,7 +30,8 @@ void CTaskParser::ResolveTask(SPtrCTask pTask)
   //提取任务类型
   TaskType eTType=pTask->GetType();
   if(TaskType::CLIENTLINK==eTType){
-  	
+    //客户端连接任务
+  	ClientLinked(pTask);
   }else if(TaskType::CLIENTCLOSE==eTType){
   	
   }else if(TaskType::CLIENTMSG==eTType){
@@ -52,23 +53,8 @@ void CTaskParser::ClientLinked(SPtrCTask pTask)
   string strUUID=to_string(oUId);
 
   //将客户端连接信息存入队列
+  g_oClientManager.InsertCInfo(hdlClient, strUUID);
 
-
-  //加密客户端UUID
-  string strCoded=CEncodeAndDecode::CodingByString(strUUID, m_strKey);
-
-  //发送加密UUID到客户端
-
-}
-
-//获取加密key串
-void CTaskParser::GetKey()
-{
-  //获取配置文件路径
-  string strPath=CUtility::GetConfigFilePath();
-
-  //从配置文件中读取Key串
-  ptree oPt;
-  read_json(strPath, oPt);
-  m_strKey=oPt.get<string>("conf.code_key");
+  //发送UUID到客户端
+  g_oCLinker.SendUUID(hdlClient, strUUID);
 }
