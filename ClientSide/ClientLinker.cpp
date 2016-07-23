@@ -6,6 +6,7 @@
 #include "rapidjson.h"
 #include "document.h"
 #include "stringbuffer.h"
+#include "EncodeAndDecode.h"
 #include "writer.h"
 
 using namespace boost;
@@ -108,22 +109,35 @@ void CClientLinker::SendMsgToClient(CHDL pHdl, const std::string& strMsg, CodeTy
 //参数2：UUID串
 void CClientLinker::SendUUID(CHDL pHdl, const std::string& strUUID)
 {
-  //拼装命令
+  // - - - - 拼装命令 - - - - -
   Document oDoc;
-
   oDoc.SetObject();
 
-  Value oCommand;
-  oCommand.SetString(strUUID.c_str(), strUUID.length(), oDoc.GetAllocator());
+  Value oUUID;
+  oUUID.SetString(strUUID.c_str(), strUUID.length(), oDoc.GetAllocator());
+  oDoc.AddMember("command", Value(230001), oDoc.GetAllocator());
+  oDoc.AddMember("uid", oUUID, oDoc.GetAllocator());
 
-  oDoc.AddMember("command", Value(20015), oDoc.GetAllocator());
-  oDoc.AddMember("uid", oCommand, oDoc.GetAllocator());
+//   oDoc.AddMember("command", Value(230000), oDoc.GetAllocator());
+//   Value oArray(kArrayType);
+//   Value oAdd1;
+//   oAdd1="ws://192.168.1.222:30012";
+//   Value oAdd2;
+//   oAdd2="ws://127.0.0.1:30012";
+//   oArray.PushBack(oAdd1, oDoc.GetAllocator());
+//   oArray.PushBack(oAdd2, oDoc.GetAllocator());
+//   oDoc.AddMember("addres", oArray, oDoc.GetAllocator());
 
   StringBuffer buffer;
   buffer.Clear();
-
   Writer<StringBuffer> oWriter(buffer);
   oDoc.Accept(oWriter);
 
   string strMsg=buffer.GetString();
+
+  //使用源key串加密命令
+  string strCoded=CEncodeAndDecode::CodingByString(strMsg, m_strKey);
+
+  //发送命令
+  SendMsgToClient(pHdl, strCoded);
 }

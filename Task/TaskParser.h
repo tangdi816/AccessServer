@@ -23,6 +23,10 @@ private:
   //客户端连接任务
   //参数：传入任务对象指针
   void ClientLinked(SPtrCTask pTask);
+
+  //客户端断开任务
+  //参数：传入任务对象指针
+
 };
 
 #endif
